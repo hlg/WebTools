@@ -137,7 +137,7 @@ class BimServerTaskPanel:
                 url2 = url + "/json"
                 data = {'request': {'interface': 'AuthInterface', 'method': 'login', 'parameters': {'username': login, 'password': passwd}}}
                 try:
-                    resp = requests.post(url2,data = json.dumps(data))
+                    resp = requests.post(url2, data = json.dumps(data))
                 except:
                     FreeCAD.Console.PrintError(translate("WebTools","Unable to connect to BimServer at")+" "+url+"\n")
                     self.form.labelStatus.setText(translate("WebTools","Connection failed."))
@@ -148,15 +148,14 @@ class BimServerTaskPanel:
                     except:
                         return
                     else:
-                        if store:
-                            self.prefs.SetString("BimServerUrl",url)
-                            if token:
-                                self.prefs.SetString("BimServerToken",token)
-                        else:
-                            self.prefs.SetString("BimServerToken","")
+                        self.prefs.SetString("BimServerUrl",url)
+                        self.prefs.SetString("BimServerToken", token if store and token else "")
                         if token:
                             self.token = token
                             self.getProjects()
+                else:
+                    FreeCAD.Console.PrintError(translate("Webtools", "Unable to login to BIMserver, HTTP error: {0} ({1})".format(resp.status_code, requests.status_codes._codes[resp.status_code])))
+
         self.form.labelStatus.setText("")
 
     def browse(self):
